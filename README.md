@@ -1,4 +1,8 @@
-# DianaRodriguezRepos
+# EVALUACIÓN PRÁCTICA PARA FRONT JUNIOR
+
+# Nombre: Diana Rodriguez Mendoza
+# Puesto de Postulación: Front Junior
+# Fecha: 12/11/2022
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 13.1.3.
 
