@@ -6,12 +6,11 @@ import { AppComponent } from './app.component';
 import { PokemonsComponent } from './components/pokemons/pokemons.component';
 import { PokemonComponent } from './components/pokemon/pokemon.component';
 import { SearcherComponent } from './components/searcher/searcher.component';
-import { CardPokemonComponent } from './components/card-pokemon/card-pokemon.component';
 import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from './material/material/material.module';
 import { PaginationComponent } from './components/pagination/pagination.component';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -19,7 +18,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     PokemonsComponent,
     PokemonComponent,
     SearcherComponent,
-    CardPokemonComponent,
     PaginationComponent
   ],
   imports: [

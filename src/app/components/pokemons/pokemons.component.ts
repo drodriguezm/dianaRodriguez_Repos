@@ -5,11 +5,20 @@ import { PokemonService } from '../../services/pokemon.service';
 
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import {animate, state, style, transition, trigger} from '@angular/animations';
+import { ElementData } from 'src/app/interfaces/element-data.interface';
 
 @Component({
   selector: 'app-pokemons',
   templateUrl: './pokemons.component.html',
-  styleUrls: ['./pokemons.component.scss']
+  styleUrls: ['./pokemons.component.scss'],
+  animations: [
+    trigger('detailExpand', [
+      state('collapsed', style({height: '0px', minHeight: '0'})),
+      state('expanded', style({height: '*'})),
+      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
+    ]),
+  ],
 })
 export class PokemonsComponent implements OnInit {
 
@@ -23,9 +32,11 @@ export class PokemonsComponent implements OnInit {
   hayDataDetail: boolean = false;
   initGrid: boolean = true;
   pokemonDetail!: any;
-  nothingDataMessage :string = 'No se cuenta con la información según los filtros elegidos.';
+  nothingDataMessage :string = 'No se cuenta con la información del pokemon ingresado.';
 
-  displayedColumns: string[] = ['position', 'image', 'name', 'action'];
+  columnsToDisplay : string[] = ['position', 'name', 'expandir'];
+  columnsToDisplayWithExpand = [...this.columnsToDisplay, 'expand'];
+  expandedElement!: ElementData | null;
   dataSource = new MatTableDataSource<any>(this.data);
 
   @ViewChild(MatPaginator, { static: true }) paginator!: MatPaginator;
@@ -34,8 +45,6 @@ export class PokemonsComponent implements OnInit {
   constructor( private _pokemonService:PokemonService,
                 ) {
   }
-
-
 
 
   buscar( termino: string ) {
@@ -50,9 +59,17 @@ export class PokemonsComponent implements OnInit {
           pokemonData = {
             position: resp.id,
             image: resp.sprites.front_default,
-            name: resp.name
+            name: resp.name,
+            types: resp.types[0].type.name,
+            weight: resp.weight,
+            moves: resp.moves[0].move.name,
+            sprites: [{
+              back_default : resp.sprites.back_default,
+              back_shiny: resp.sprites.back_shiny,
+              front_default: resp.sprites.front_default,
+              front_shiny: resp.sprites.front_shiny,
+             }]
           };
-          console.log('pokemonData',pokemonData);
 
           this.clearData();
 
@@ -64,8 +81,6 @@ export class PokemonsComponent implements OnInit {
 
         this.data.length>0? this.hayData: !this.hayData;
 
-        console.log('this.hayData', this.hayData);
-        console.log('this.initGrid', this.initGrid);
 
         },
         err => {
@@ -77,7 +92,8 @@ export class PokemonsComponent implements OnInit {
             this.dataSource = new MatTableDataSource<any>(this.data);
             this.dataSource.paginator = this.paginator;
           }
-          console.log(err);
+          // console.log(err);
+          alert(this.nothingDataMessage);
         }
       );
 
@@ -87,9 +103,9 @@ export class PokemonsComponent implements OnInit {
 
   }
 
-ngOnInit(): void {
-  this.getPokemons();
-}
+  ngOnInit(): void {
+    this.getPokemons();
+  }
 
   clearData(){
     this.data = [];
@@ -101,13 +117,22 @@ ngOnInit(): void {
 
     this.clearData();
 
-    for (let i = 1; i <= 150; i++) {
+    for (let i = 1; i <= 250; i++) {
       this._pokemonService.getPokemonById(i).subscribe(
         (res:any) => {
           pokemonData = {
             position: i,
             image: res.sprites.front_default,
-            name: res.name
+            name: res.name,
+            types: res.types[0].type.name,
+            weight: res.weight,
+            moves: res.moves[0].move.name,
+            sprites: [{
+              back_default : res.sprites.back_default,
+              back_shiny: res.sprites.back_shiny,
+              front_default: res.sprites.front_default,
+              front_shiny: res.sprites.front_shiny,
+             }]
           };
           this.data.push(pokemonData);
           this.dataSource = new MatTableDataSource<any>(this.data);
@@ -121,45 +146,6 @@ ngOnInit(): void {
   }
 
   getRow(row:any){
-  }
-
-
-  viewDetail(idx: number){
-
-    this._pokemonService.getPokemonById(idx).subscribe(
-      (res:any) => {
-        console.log('res',res);
-
-        if (res) {
-          this.hayDataDetail = true;
-          this.pokemonDetail = {
-            id: (Number)(res.id),
-            image: res.sprites.front_default,
-            name: res.name,
-            types: res.types[0].type.name,
-            weight: res.weight,
-            moves: res.moves[0].move.name,
-            sprites: [{
-              back_default : res.sprites.back_default,
-              back_shiny: res.sprites.back_shiny,
-              front_default: res.sprites.front_default,
-              front_shiny: res.sprites.front_shiny,
-             }]
-          };
-
-        } else {
-
-          this.hayDataDetail = false;
-        }
-
-        console.log('pokemonDetail', this.pokemonDetail);
-
-
-      },
-      err => {
-        console.log(err);
-      }
-    );
   }
 
 }

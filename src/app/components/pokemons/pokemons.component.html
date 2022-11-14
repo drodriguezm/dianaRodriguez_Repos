@@ -4,9 +4,8 @@
 
   <app-searcher (onEnter)="buscar($event)"></app-searcher>
 
-  <table mat-table [dataSource]="dataSource">
+  <!-- <table mat-table [dataSource]="dataSource">
 
-    <!-- content -->
     <mat-card fxFlexAlign="stretch">
 
       <ng-container matColumnDef="position">
@@ -17,7 +16,6 @@
     <ng-container matColumnDef="image">
         <th mat-header-cell *matHeaderCellDef> Imagen </th>
         <td mat-cell *matCellDef="let element">
-            <!-- <img src="{{element.image}}" alt="pokemon" width="100" height="100"> -->
             <img
             mat-card-image
             src="{{element.image}}"
@@ -33,15 +31,6 @@
     </ng-container>
 
 
-    <!-- <ng-container>
-      <th mat-header-cell matColumnDef="detalle" *matHeaderCellDef> </th>
-        <td mat-cell *matCellDef="let element">
-          <button name="">Detalle</button>
-        </td>
-
-  </ng-container> -->
-
-      <!-- Acciones -->
       <ng-container matColumnDef="action">
       <th mat-header-cell *matHeaderCellDef> Acciones </th>
       <td mat-cell *matCellDef="let element" class="align-middle text-center">
@@ -54,20 +43,77 @@
 
     </mat-card>
 
-
-      <!-- details -->
-
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="getRow(row)"></tr>
 
 
 
-  </table>
+  </table> -->
+
+  <table mat-table
+  [dataSource]="dataSource"
+   multiTemplateDataRows
+  class="mat-elevation-z8">
+<ng-container matColumnDef="{{column}}" *ngFor="let column of columnsToDisplay">
+<th mat-header-cell *matHeaderCellDef> {{column}} </th>
+<td mat-cell *matCellDef="let element"> {{element[column]}} </td>
+</ng-container>
+<ng-container matColumnDef="expand">
+<th mat-header-cell *matHeaderCellDef aria-label="row actions">&nbsp;</th>
+<td mat-cell *matCellDef="let element">
+ <button mat-icon-button aria-label="expand row" (click)="(expandedElement = expandedElement === element ? null : element); $event.stopPropagation()">
+   <mat-icon *ngIf="expandedElement !== element">keyboard_arrow_down</mat-icon>
+   <mat-icon *ngIf="expandedElement === element">keyboard_arrow_up</mat-icon>
+ </button>
+</td>
+</ng-container>
+
+<!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
+<ng-container matColumnDef="expandedDetail">
+<td mat-cell *matCellDef="let element" [attr.colspan]="columnsToDisplayWithExpand.length">
+ <div class="example-element-detail"
+      [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
+   <div class="example-element-diagram">
+     <div class="example-element-position"> {{element.position}} </div>
+     <div class="example-element-symbol">
+       <img [src]="element.image" alt="Photo of a Shiba Inu" width="60em" height="60em" />
+     </div>
+     <div class="example-element-name"> <strong>{{element.name}}</strong> </div>
+   </div>
+   <div class="example-element-diagram-sin-borde">
+     <div class="example-element-position"><strong>Tipo:</strong> {{element.types}} </div>
+     <div class="example-element-name"> <strong>Peso:</strong> {{element.weight}} </div>
+     <div class="example-element-name"> <strong>Movimiento:</strong>  {{element.moves}} </div>
+   </div>
+   <div class="example-element-description">
+     <span class="example-element-description-attribution">
+         <p>Stripes:</p>
+         <img *ngFor="let item of element.sprites"
+         src="{{ item.back_default }}" alt="pokemon" width="100" height="100"/>
+         <img *ngFor="let item of element.sprites"
+         src="{{ item.back_shiny }}" alt="pokemon" width="100" height="100"/>
+         <img *ngFor="let item of element.sprites"
+         src="{{ item.front_default }}" alt="pokemon" width="100" height="100"/>
+         <img *ngFor="let item of element.sprites"
+         src="{{ item.front_shiny }}" alt="pokemon" width="100" height="100"/>
+     </span>
+   </div>
+ </div>
+</td>
+</ng-container>
+
+<tr mat-header-row *matHeaderRowDef="columnsToDisplayWithExpand"></tr>
+<tr mat-row *matRowDef="let element; columns: columnsToDisplayWithExpand;"
+ class="example-element-row"
+ [class.example-expanded-row]="expandedElement === element"
+ (click)="expandedElement = expandedElement === element ? null : element">
+</tr>
+<tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
+</table>
 
 
 
-
-  <mat-paginator style="width: 60%;" [pageSizeOptions]="[4, 8, 18]" showFirstLastButtons></mat-paginator>
+  <mat-paginator [pageSizeOptions]="[4, 8, 18]" showFirstLastButtons></mat-paginator>
 
 
 
